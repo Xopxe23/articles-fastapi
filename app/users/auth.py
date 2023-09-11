@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from fastapi import Depends
 from jose import jwt
 from passlib.context import CryptContext
 
@@ -18,7 +19,7 @@ def verify_password(plain_password: str, hashed_password: str):
 
 
 async def authenticate_user(email: str, password: str):
-    user = UserDAO.find_one_or_none(email=email, password=password)
+    user = await UserDAO.find_one_or_none(email=email)
     if not user or not verify_password(password, user.hashed_password):
         return None
     return user
