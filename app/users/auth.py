@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-from fastapi import Depends
 from jose import jwt
 from passlib.context import CryptContext
 
