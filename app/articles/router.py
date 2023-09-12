@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 
 from app.articles.dao import ArticleDAO
 from app.articles.schemas import SArticleInput, SArticleOutput, SArticleUpdate
+from app.exceptions import PermissionDeniedException
 from app.users.dependencies import get_current_user
 from app.users.models import User
 
@@ -24,11 +25,17 @@ async def get_article_by_id(article_id: int):
 
 
 @router.put("/{article_id}")
-async def update_article(article_id: int, data: SArticleUpdate):
+async def update_article(article_id: int, data: SArticleUpdate, user: User = Depends(get_current_user)):
+    is_author = await ArticleDAO.find_one_or_none(user_id=user.id, id=article_id)
+    if not is_author:
+        raise PermissionDeniedException
     articles_data = SArticleUpdate.model_dump(data, exclude_none=True)
     return await ArticleDAO.update(article_id, articles_data)
 
 
 @router.delete("/{article_id}")
-async def delete_article(article_id: int):
+async def delete_article(article_id: int, user: User = Depends(get_current_user)):
+    is_author = await ArticleDAO.find_one_or_none(user_id=user.id, id=article_id)
+    if not is_author:
+        raise PermissionDeniedException
     return await ArticleDAO.delete(article_id)

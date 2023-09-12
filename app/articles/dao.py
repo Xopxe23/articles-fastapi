@@ -1,7 +1,7 @@
-from sqlalchemy import select, ChunkedIteratorResult
+from sqlalchemy import select, ChunkedIteratorResult, update, delete
 
 from app.articles.models import Article
-from app.articles.schemas import SArticleOutput
+from app.articles.schemas import SArticleOutput, SArticleUpdate
 from app.dao.base import BaseDAO
 from app.database import async_session_maker
 from app.users.models import User
